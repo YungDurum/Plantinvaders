@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+
+<html lang="en">
+    <head>
+        <meta name="viewport" content="initial-scale=1, width=device-width">
+        <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet" type="text/css"/>
+        <title>hello</title>
+        <script src="https://kit.fontawesome.com/98c4cced12.js" crossorigin="anonymous"></script>
+    </head>
+    <body>
+        <header>
+            <img src="/static/logo.png" alt="Logo" class="logo">
+          </header>
+        <nav>
+            <ol>
+                <li><a class="arrow"><i class="fa-solid fa-arrow-right"></i>STATS</a></li>
+                <li><a class="arrow"><i class="fa-solid fa-arrow-right"></i>Notifications</a></li>
+                <li><a class="arrow"><i class="fa-solid fa-arrow-right"></i>Help</a></li>
+                <li><a class="arrow"><i class="fa-solid fa-arrow-right"></i>Logout</a></li>
+            </ol>
+        </nav>
+        {% block body %}{% endblock %}
+    </body>
+</html>

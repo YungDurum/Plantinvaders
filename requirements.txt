@@ -1,0 +1,4 @@
+# This file shoes the requirements for the flask application to run
+Flask # Flask web framework
+# misschien iets om contact te maken met de app software op the pi?
+sqlite3

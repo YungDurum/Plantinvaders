@@ -1,7 +1,2 @@
-test = 0
-
-test = input()
-
-print(f"You chose the number {test}")
-
-print("Help")
+##Create app. 
+print("Hello")
