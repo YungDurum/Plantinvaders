@@ -8,7 +8,9 @@ header {
   top: 10%;
   display:inline-block;
   height:50px;
+  width: auto;
   text-align: center;
+  object-fit: contain;
 }
 
 body {
@@ -25,6 +27,20 @@ nav {
   line-height: 2;
   background-color: #489EFA;
   text-transform: uppercase;
+}
+.first{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+
+}
+
+.first img {
+  height: 100px;
+  width: auto;
+  object-fit: contain;
 }
 
 a {
@@ -71,6 +87,4 @@ li {
   object-fit: contain;
 }
 
-.caption {
-}
 
