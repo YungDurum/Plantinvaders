@@ -1,5 +1,6 @@
+{% extends "layout.html" %}
 {% block body %}
-<div>
+<div class="graph">
     <canvas id="myChart"></canvas>
   </div>
   
@@ -7,17 +8,26 @@
   
   <script>
     const ctx = document.getElementById('myChart');
-  
-    new Chart(ctx, {
-      type: 'bar',
-      data: {
-        labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-        datasets: [{
-          label: '# of Votes',
-          data: [12, 19, 3, 5, 2, 3],
-          borderWidth: 1
-        }]
-      },
+    const data1 = JSON.parse({{ data | tojson | safe }})
+    console.log(typeof(data1))
+    const labels = data1.map(item => item.Timestamp);
+    const moisture = data1.map(item => item.saturation);
+    
+    // data block
+    const data = {
+      labels: labels,
+      datasets: [{
+        label: 'Percentage',
+        data: moisture,
+        borderWidth: 1,
+        pointRadius: 0
+      }]
+    }
+    
+    // config block
+    const config = {
+      type: 'line',
+      data: data, 
       options: {
         scales: {
           y: {
@@ -25,7 +35,10 @@
           }
         }
       }
-    });
+    };
+    
+    // render block
+    new Chart(ctx, config);
   </script>
     {% endblock %}
             

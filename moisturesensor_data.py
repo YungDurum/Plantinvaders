@@ -30,8 +30,6 @@ min_value = 56060
 max_value = 29532
 
 def moisture():
-    min_value = 56060
-    max_value = 29532
     # Go from current value to moisture percentage
     def percentage(value_now):
          moist = (value_now - min_value)/(max_value-min_value)
@@ -39,9 +37,9 @@ def moisture():
 
     rollingmean=[]
         
-    for x in range(10):
+    for x in range(5):
         rollingmean.append(chan.value)
-        time.sleep(1)
+        time.sleep(0.5)
              
     average_value = mean(rollingmean)     
     return (percentage(average_value))

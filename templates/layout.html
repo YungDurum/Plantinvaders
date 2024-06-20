@@ -4,18 +4,21 @@
     <head>
         <meta name="viewport" content="initial-scale=1, width=device-width">
         <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet" type="text/css"/>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Dosis:wght@200..800&display=swap" rel="stylesheet">
         <title>hello</title>
         <script src="https://kit.fontawesome.com/98c4cced12.js" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
     </head>
     <body>
         <header>
-            <img src="/static/logo.png" alt="Logo" class="logo">
-          </header>
+            <a href="/"><img href="/" src="/static/logo.png" alt="Logo" class="logo"></a>
+        </header>
         <nav>
             <ol>
                 <li><a href="/stats" class="arrow"><i class="fa-solid fa-arrow-right"></i>STATS</a></li>
-                <li><a href = "/notification" class="arrow"><i class="fa-solid fa-arrow-right"></i>Notifications</a></li>
+                <li><a href = "/notifications" class="arrow"><i class="fa-solid fa-arrow-right"></i>Notifications</a></li>
                 <li><a href="/Help" class="arrow"><i class="fa-solid fa-arrow-right"></i>Help</a></li>
                 <li><a href="/logout" class="arrow"><i class="fa-solid fa-arrow-right"></i>Logout</a></li>
             </ol>

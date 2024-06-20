@@ -6,6 +6,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from cs50 import SQL
 import threading
 import time
+import json
 
 # Configure application
 app = Flask(__name__)
@@ -26,7 +27,7 @@ def update_db(wait):
         db.execute("INSERT INTO saturation_data (id, saturation) VALUES (?,?)", plant , value)
         time.sleep(wait)
 
-thread = threading.Thread(target=update_db, args=(300,))
+thread = threading.Thread(target=update_db, args=(600,))
 
 if db.execute("SELECT id FROM plants"):
     thread.start()
@@ -44,7 +45,9 @@ def after_request(response):
 @app.route("/")
 @plants_required
 def index():
-    return render_template("index.html")
+    value = moisture() * 100
+    value = "{:.2f}".format(value)
+    return render_template("index.html", plant_moist = value)
 
 @app.route("/new", methods=["GET", "POST"])
 def addplant():
@@ -58,8 +61,29 @@ def addplant():
 @app.route("/stats")
 @plants_required
 def stats():
-    return render_template("graph.html")
+    data = db.execute("SELECT timestamp, saturation FROM saturation_data")
+    json_string = json.dumps(data)
+    return render_template("graph.html", data=json_string)
 
+@app.route("/notifications",  methods=["GET", "POST"])
+@plants_required
+def phonenumbers():
+    if request.method == "GET":
+        phonenumbers = db.execute("SELECT * FROM phonenumbers")
+        for row in phonenumbers:
+            anonymous = 8 *"*" + "{phone}"
+            row["phone"]= anonymous.format(phone=row["phone"][-2:])
+        # phonenumber should be anonymous
+        if not phonenumbers:
+            return render_template("notifications.html")
+        return render_template("notifications.html", phone_data = phonenumbers)
+
+        
+    if request.method == "POST":
+        phonenumber = request.form.get("phonenumber")
+        name = request.form.get("name")
+        db.execute("INSERT INTO phonenumbers (name, phone) VALUES (?,?)",name, phonenumber)
+        return redirect("/notifications")
 
 if __name__ == '__main__':
     app.run(debug=True)
