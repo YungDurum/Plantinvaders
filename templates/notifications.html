@@ -1,0 +1,28 @@
+!{% extends "layout.html" %}
+{% block body %}
+<div class = "new_notifier">
+    <form action="/notifications" method="post">
+            <div class="mb-3">
+                <input autocomplete="off" autofocus class="form-control mx-auto w-auto" name="name" placeholder="Name" type="text">
+                <input autocomplete="off" autofocus class="form-control mx-auto w-auto" name="phonenumber" placeholder="Phonenumber" type="text">
+                <button class="btn btn-primary" type="submit">add</button>
+            </div>
+    </form>
+</div>
+{% if phone_data%}
+<div class = "table">
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Phone</th>
+        </tr>
+        <tr>
+            {% for row in phone_data %}
+            <td>{{ row["name"] }}</td>
+            <td>{{ row["phone"] }}</td>
+            {% endfor %}
+        </tr>
+    </table>
+</div>
+{% endif %}
+{% endblock %}
