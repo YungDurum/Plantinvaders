@@ -3,3 +3,11 @@ adafruit_mcp3xxx/
 /busio.py
 /digitalio.py
 /node_modules
+/__pycache__/board.cpython-38.pyc
+/__pycache__/busio.cpython-38.pyc
+/__pycache__/digitalio.cpython-38.pyc
+/__pycache__/helpers.cpython-38.pyc
+/__pycache__/moisturesensor_data.cpython-38.pyc
+/board.pyc
+/busio.pyc
+/digitalio.pyc

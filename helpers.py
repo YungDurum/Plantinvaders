@@ -1,15 +1,17 @@
+import os
 import time
 import busio
 import digitalio
 import board
 import adafruit_mcp3xxx.mcp3008 as MCP
 from adafruit_mcp3xxx.analog_in import AnalogIn
+from flask import Flask, flash, jsonify, redirect, render_template, request, session # type: ignore
 from statistics import mean
 from cs50 import SQL
-from flask import Flask, flash, jsonify, redirect, render_template, request, session
 from functools import wraps
+import re
 
-
+# Configure CS50 Library to use SQLite database
 db = SQL("sqlite:///moisture.db")
 
 # Create the SPI bus
@@ -55,6 +57,10 @@ def plants_required(f):
             return f(*args, **kwargs)
     return decoratedfunction
 
-
+# attribution cs50 duck
+def is_valid_email(email):
+    pattern = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
+    return re.match(pattern, email) is not None
+    
 if __name__ == "__main__":
     moisture()

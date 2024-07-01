@@ -2,10 +2,21 @@
 
 {% block body %}
     <div class="value">
-        <img id="plant" src="/static/blij.png" alt="Logo" class="logo">
+        <img id="plant" src="{{ picture }}" alt="Logo" class="logo">
     </div>
     <div class="moisture">
         <img id="droplet" src="/static/waterdroplet.png" alt="Logo">
         <span class="caption">{{ plant_moist }}%</span>
     </div>
+    <script>
+        const plant = document.querySelector("#plant");
+        original = plant.src
+
+        plant.addEventListener("mouseover", function() {
+            plant.src = "static/kissie.png";
+    });
+        plant.addEventListener("mouseout", function() {
+            plant.src = "{{ picture }}";
+    });
+    </script>
 {% endblock %}

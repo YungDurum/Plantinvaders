@@ -113,12 +113,11 @@ li {
 }
 
 /* notifications */
-.new_notifier{
+/* .new_notifier{
   display: flex;
   align-items: center;
-  justify-content: center;
   margin: 10px;
-}
+} */
 
 .table{
   display: flex;
@@ -127,8 +126,42 @@ li {
   margin: 10px;
 }
 
+.mb-3 {
+  display:flex;
+  align-items: last baseline;
+  justify-content: center;
+  gap: 10px;
+}
+
+/* Help */
+.helpbox{
+  display: flex;
+  width: 700px;
+  height: auto;
+  color: #ffffff;
+  justify-content: center;
+  align-items: center;
+  margin: auto;
+  border: solid 3px rgb(0, 0, 0);
+  flex-direction: column;
+  gap: 10px;
+}
+
 /* graph */
 .graph{
   background-color: #ffffff;
+}
 
+.chartcard{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chartBox {
+  width: 700px;
+  padding: 20px;
+  border-radius: 20px;
+  /* border: solid 3px rgb(0, 0, 0); */
+  background: white;
 }
