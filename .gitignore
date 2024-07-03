@@ -12,3 +12,4 @@ adafruit_mcp3xxx/
 /busio.pyc
 /digitalio.pyc
 helper_new.py
+/moisture.db
