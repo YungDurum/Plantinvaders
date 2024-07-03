@@ -1,6 +1,6 @@
 import os
 from dotenv import load_dotenv
-from helpers import moisture, plants_required, is_valid_email
+from helpers import moisture, plants_required, is_valid_email, email_alert, email_happy, mail_checker, update_db, app, mail, db 
 from flask_session import Session
 from flask import Flask, flash, jsonify, redirect, render_template, request, session 
 from cs50 import SQL
@@ -13,93 +13,11 @@ import re
 #load env file
 load_dotenv()
 
-# Configure CS50 Library to use SQLite database
-db = SQL("sqlite:///moisture.db")
-
-
-# Configure application
-app = Flask(__name__)
-
-# app config
-app.config["SESSION_TYPE"] = "filesystem"
-app.config["SESSION_PERMANENT"] = False
-
-# Flask-Mail config
-app.config["MAIL_SERVER"] = 'smtp.gmail.com'
-app.config["MAIL_PORT"] = 587
-app.config["MAIL_USE_TLS"] = True
-app.config["MAIL_USERNAME"] = os.getenv("EMAIL_USER")
-app.config["MAIL_PASSWORD"] = os.getenv("EMAIL_PASS")
-
-app.config["SESSION_PERMANENT"] = False
-
-# Other email settings
-# app.config["RAGTIME_ADMIN"] = os.environ.get('RAGTIME_ADMIN')
-# app.config["RAGTIME_MAIL_SUBJECT_PREFIX"] = 'Ragtime —'
-# app.config["RAGTIME_MAIL_SENDER"] = 'Ragtime Admin <ragtime.flask@gmail.com'
-
+# Initialize the app
 Session(app)
 
-mail = Mail(app)
-
-@app.after_request
-def after_request(response):
-    """Ensure responses aren't cached"""
-    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
-    response.headers["Expires"] = 0
-    response.headers["Pragma"] = "no-cache"
-    return response
-
-def email_alert():
-    users = db.execute("SELECT name, mail from mailadresses")
-    for user in users:
-        msg = Message(subject = 'TEST, I am thirsty', sender ='plantje.dorstig@gmail.com', recipients = [user["mail"]])
-        msg.body = f'Hello {user["name"]}, I need water! \n Your Sincerely, \nYour Favourite Plant'
-        print("TEST")
-        mail.send(msg) 
-
-def email_happy(recipient = ["jeroen.vanasten@icloud.com"], name = "Jeroen"):
-    users = db.execute("SELECT name, mail from mailadresses")
-    print("SEND EMAIL HAPPY")
-
-    for user in users:
-        msg = Message(subject = 'Pfoe, I feel so much better :)', sender ='plantje.dorstig@gmail.com', recipients = [user["mail"]])
-        msg.body = f'Thanks guys, I am fine now! \n Your Sincerely, \nYour Favourite Plant'
-        mail.send(msg) 
-
-def mail_checker(value,confirmation):
-    #checks if email has been sent of not in case both are true an email will be sent
-    if value > 0.8 and confirmation == False:
-       with app.app_context():
-            email_happy()
-            return True
-    #if email have been sent resets in the middle
-    elif value < 0.75 and value > 0.45:
-        return False
-    
-    #checks if email has been sent of not in case both are true an email alert will be sent
-    elif value < 0.4 and confirmation == False:
-        with app.app_context():
-            email_alert()
-            return True
-    #in the value goes into a buffer are (in between 0.4 and 0.45). The value will be returned of the current state. This to make sure only one email gets sent
-    else:
-        return confirmation
-     
-
-# Update database every five minutes and check if mail needs to be sent
-def update_db(wait):
-    confirmation = False
-    while True:
-        value = moisture()
-        confirmation = mail_checker(value, confirmation)
-        plant = db.execute("SELECT id FROM plants")[0]["id"]
-        db.execute("INSERT INTO saturation_data (id, saturation) VALUES (?,?)", plant , value)
-        time.sleep(wait)
-# threat the checker
-
-thread = threading.Thread(target=update_db, args=(600,))
-
+# Start thread for updating the sensor value
+thread = threading.Thread(target=update_db, args=(app, 600,))
 if db.execute("SELECT id FROM plants"):
     thread.start()
 
@@ -111,6 +29,7 @@ def after_request(response):
     response.headers["Pragma"] = "no-cache"
     return response
 
+# Home screen
 @app.route("/")
 @plants_required
 def index():
@@ -133,6 +52,7 @@ def index():
 
     return render_template("index.html", plant_moist = value_format, picture = source)
 
+# First time usage
 @app.route("/new", methods=["GET", "POST"])
 def addplant():
     if request.method == "POST":
@@ -142,6 +62,7 @@ def addplant():
         return redirect("/")
     return "error"
 
+# The page with the stats
 @app.route("/stats")
 @plants_required
 def stats():
@@ -149,6 +70,7 @@ def stats():
     json_string = json.dumps(data)
     return render_template("graph.html", data=json_string)
 
+# The notifications page and page where you can add yourself too.
 @app.route("/notifications",  methods=["GET", "POST"])
 @plants_required
 def notify():
@@ -180,6 +102,7 @@ def notify():
         db.execute("INSERT INTO mailadresses (name, mail) VALUES (?,?)",name, mail_user)
         return redirect("/notifications")
 
+# Delete you from the list
 @app.route("/delete",  methods=["POST"])
 @plants_required
 def delete():
@@ -187,11 +110,17 @@ def delete():
     db.execute("DELETE FROM mailadresses WHERE id = ?", mail_id)
     return redirect("/notifications")
 
+# Info page
 @app.route("/info")
 @plants_required
 def help():
     return (render_template("info.html"))
 
+# Info page
+@app.route("/contactme")
+@plants_required
+def contact():
+    return (render_template("contactme.html"))
 
 if __name__ == '__main__':
     app.run(debug=True, use_reloader=False)

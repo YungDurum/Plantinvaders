@@ -1,22 +1,28 @@
 {% extends "layout.html" %}
 {% block body %}
+
 <div class = "new_notifier">
+    
+    <h3 class = "info_header">Add to the list</h3>
+    <span class = "subtext">
+        Get notified when your favourite plant is thirsty. The more the merrier.
+    </span>
     <form action="/notifications" method="post">
             <div class="mb-3">
                 <div class="form-group">
-                <label for="exampleInputEmail1">Name</label>
+                <label for="exampleInputEmail1"></label>
                 <input autocomplete="off" autofocus class="form-control mx-auto w-auto" name="name" placeholder="Name" type="text">
                 </div>
                 <div class="form-group">
-                <label>Mailaddress</label>
+                <label></label>
                 <input autocomplete="off" autofocus class="form-control mx-auto w-auto" name="Mail-adress" placeholder="Mailaddress" type="text">
                 </div>
                 <button class="btn btn-primary" type="submit">Add</button>
             </div>
     </form>
 {% if mail_data%}
-    <table class="table table-striped">
-        <tr>
+    <table class="table table-striped d-flex">
+        <tr class="bg-primary">
             <th scope="col"> Name</th>
             <th scope="col"> Mailaddress</th>
             <th scope="col"></th>

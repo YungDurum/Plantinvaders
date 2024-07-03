@@ -11,3 +11,4 @@ adafruit_mcp3xxx/
 /board.pyc
 /busio.pyc
 /digitalio.pyc
+helper_new.py

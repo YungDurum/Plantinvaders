@@ -5,7 +5,8 @@ header {
 }
 
 .logo {
-  margin: 20px;
+  margin: 0px;
+  margin-top: 40px;
   display:inline-block;
   height:50px;
   width: auto;
@@ -14,20 +15,19 @@ header {
 }
 
 body {
-  max-width: 900px;
+  max-width: 1200px;
   margin: auto;
-  background-color: #489EFA;
+  background-color: #515eead8;
 }
 
 nav {
   display:inline-flex;
   justify-content:flex-start;
-  margin: 40px;
+  margin-top: 80px;
   align-items:center;
   font-family: 'Press Start 2P';
   font-size: 1rem;
   line-height: 2;
-  background-color: #489EFA;
   text-transform: uppercase;
 }
 .first{
@@ -47,11 +47,11 @@ nav {
 
 /* Here is the  nav bar */
 nav a {
-  text-decoration: none;
   color: #fff090;
 }
 
 li {
+  list-style-type: none;
   color: #ffffff;
 }
 
@@ -67,14 +67,16 @@ li {
 
 .arrow:hover {
   cursor: pointer;
-  background-color: rgba(0,0,0,0.2);
+  background-color: rgba(0, 0, 0, 0.168);
+  color: #ffffffc3;
 }
 
 .arrow:hover i { 
   display: block;
   position: absolute;
   top: 0.50em; 
-  left: -6em;
+  left: -3em;
+  color:#ffffff
 }
 
 .value {
@@ -113,38 +115,55 @@ li {
 }
 
 /* notifications */
-/* .new_notifier{
+.new_notifier{
   display: flex;
-  align-items: center;
-  margin: 10px;
-} */
+  width: 600px;
+  height: auto;
+  color: #ffffff;
+  justify-content: center;
+  align-items: flex-start;
+  margin: auto;
+  margin-top: -25vh;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.subtext{
+  margin-top: -10px;
+}
 
 .table{
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 10px;
+  width: 100% !important;
 }
+
 
 .mb-3 {
   display:flex;
   align-items: last baseline;
+  margin-top: -25px;
   justify-content: center;
-  gap: 10px;
+  gap: 20px;
 }
 
-/* Help */
+/* info */
 .helpbox{
   display: flex;
-  width: 700px;
+  width: 600px;
   height: auto;
   color: #ffffff;
   justify-content: center;
   align-items: center;
   margin: auto;
-  border: solid 3px rgb(0, 0, 0);
+  margin-top: -25vh;
   flex-direction: column;
   gap: 10px;
+}
+
+.info_header{
+  align-self: flex-start;
+  font-family: 'Press Start 2P';
+  font-size: 1.5rem;
+
 }
 
 /* graph */
@@ -159,7 +178,8 @@ li {
 }
 
 .chartBox {
-  width: 700px;
+  width: 600px;
+  margin-top: -25vh;
   padding: 20px;
   border-radius: 20px;
   /* border: solid 3px rgb(0, 0, 0); */
