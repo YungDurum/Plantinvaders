@@ -13,3 +13,4 @@ adafruit_mcp3xxx/
 /digitalio.pyc
 helper_new.py
 /moisture.db
+templates/Final-project.code-workspace

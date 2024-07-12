@@ -1,26 +1,28 @@
-import os
-from dotenv import load_dotenv
-from helpers import moisture, plants_required, is_valid_email, email_alert, email_happy, mail_checker, update_db, app, mail, db 
-from flask_session import Session
 from flask import Flask, flash, jsonify, redirect, render_template, request, session 
-from cs50 import SQL
+from flask_session import Session
 from flask_mail import Mail, Message 
-import threading
-import time
+from helpers import moisture, plants_required, is_valid_email, email_alert, email_happy, mail_checker, update_db, app, mail, db , email_welcome
 import json
 import re
+import threading
 
-#load env file
-load_dotenv()
+# CONSTANTS
+app
+mail
+db
+NAME_PLANT = None
+WAIT = 600 # time between every database update and when is checked if an email needs to be send
+
+# if a plant has been declared.
+if len(db.execute("SELECT * from plants")):
+    NAME_PLANT = db.execute("SELECT * from plants")[0]['name'].upper()
+    thread = threading.Thread(target=update_db, args=(app, WAIT, NAME_PLANT,))
+    thread.start()
 
 # Initialize the app
 Session(app)
 
-# Start thread for updating the sensor value
-thread = threading.Thread(target=update_db, args=(app, 600,))
-if db.execute("SELECT id FROM plants"):
-    thread.start()
-
+# All the app routes
 @app.after_request
 def after_request(response):
     """Ensure responses aren't cached"""
@@ -33,6 +35,7 @@ def after_request(response):
 @app.route("/")
 @plants_required
 def index():
+    # What emoji does the plant have
     value = moisture() * 100
     value_format = "{:.2f}".format(value)
     if value < 20:
@@ -50,14 +53,16 @@ def index():
     elif value < 100:
         source = "static/verliefd.png"
 
-    return render_template("index.html", plant_moist = value_format, picture = source)
+    return render_template("index.html", plant_moist = value_format, picture = source, nameplant = NAME_PLANT )
 
 # First time usage
 @app.route("/new", methods=["GET", "POST"])
 def addplant():
     if request.method == "POST":
-        name = request.form.get("name")
-        db.execute("INSERT INTO plants (name) VALUES (?)",name)
+        global NAME_PLANT
+        NAME_PLANT = request.form.get("name")
+        db.execute("INSERT INTO plants (name) VALUES (?)", NAME_PLANT)
+        thread = threading.Thread(target=update_db, args=(app, WAIT, NAME_PLANT,))
         thread.start()
         return redirect("/")
     return "error"
@@ -100,6 +105,7 @@ def notify():
         
 
         db.execute("INSERT INTO mailadresses (name, mail) VALUES (?,?)",name, mail_user)
+        email_welcome(recipient=[mail_user], name = name, plantname = NAME_PLANT)
         return redirect("/notifications")
 
 # Delete you from the list
@@ -112,13 +118,11 @@ def delete():
 
 # Info page
 @app.route("/info")
-@plants_required
 def help():
     return (render_template("info.html"))
 
 # Info page
 @app.route("/contactme")
-@plants_required
 def contact():
     return (render_template("contactme.html"))
 

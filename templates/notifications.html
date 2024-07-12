@@ -21,17 +21,19 @@
             </div>
     </form>
 {% if mail_data%}
-    <table class="table table-striped d-flex">
-        <tr class="bg-primary">
+    <table class="table">
+        <tr>
+            <th scope="col">#</th>
             <th scope="col"> Name</th>
             <th scope="col"> Mailaddress</th>
             <th scope="col"></th>
         </tr>
         {% for row in mail_data %} 
         <tr>
-            <td>{{ row["name"] }}</td>
-            <td>{{ row["mail"] }}</td>
-            <td><form action="/delete" method="post" ><button class="btn btn-primary" name = "delete" type="submit" value = {{ row["id"] }}>Delete</button></form></td>
+            <td class="column1">{{ loop.index}}</td>
+            <td class="column2">{{ row["name"] }}</td>
+            <td class="column3">{{ row["mail"] }}</td>
+            <td class="column4"><form action="/delete" method="post" ><button class="btn btn-primary" name = "delete" type="submit" value = {{ row["id"] }}>Delete</button></form></td>
         </tr>
         {% endfor %}
     </table>

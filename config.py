@@ -1,6 +1,7 @@
 import os
 from dotenv import load_dotenv
 
+
 load_dotenv()
 
 # Flask Mail and app config
@@ -13,7 +14,6 @@ class Config(object):
     MAIL_USERNAME = os.getenv("EMAIL_USER")
     MAIL_PASSWORD = os.getenv("EMAIL_PASS")
     SESSION_PERMANENT = False
-    print(MAIL_PASSWORD)
     DATABASE = "sqlite:///moisture.db"
 
 # Other email settings that i am not using currently

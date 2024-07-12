@@ -3,10 +3,11 @@
 {% block body %}
     <div class="value">
         <img id="plant" src="{{ picture }}" alt="Logo" class="logo">
-    </div>
-    <div class="moisture">
-        <img id="droplet" src="/static/waterdroplet.png" alt="Logo">
-        <span class="caption">{{ plant_moist }}%</span>
+        <span>{{ nameplant }}</span>
+        <div class="moisture">
+            <img id="droplet" src="/static/waterdroplet.png" alt="Logo">
+            <span class="caption">{{ plant_moist }}%</span>
+        </div>
     </div>
     <script>
         const plant = document.querySelector("#plant");

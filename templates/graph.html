@@ -5,7 +5,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-zoom/2.0.1/chartjs-plugin-zoom.min.js" integrity="sha512-wUYbRPLV5zs6IqvWd88HIqZU/b8TBx+I8LEioQ/UC0t5EMCLApqhIAnUg7EsAzdbhhdgW07TqYDdH3QEXRcPOQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>  
 <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
 
-<div class="chartcard">
+<div class  = "helpbox">
+  <h3 class = "info_header">Stats</h3>
   <div class= "chartBox">
     <canvas id="myChart"></canvas>
     <!-- <button name="day" onclick="changedata(array_day)">Day</button>
@@ -22,6 +23,7 @@
     const moisture = data1.map(item => item.saturation);
     
     // data block
+    // from channel chartjs on youtube
     const data = {
       labels: labels,
       datasets: [{
@@ -43,7 +45,7 @@
 
         const { ctx, chartArea: { top, bottom, height}, scales: {y} } = context.chart;
         const gradientBg = ctx.createLinearGradient(0, top, 0, bottom);
-        const range = [3, 10, y.max];
+        const range = [0.2, 0.8, 1.0];
         const rangeReverse = range.reverse()
 
         gradientBg.addColorStop(0, bgColor[0]);
