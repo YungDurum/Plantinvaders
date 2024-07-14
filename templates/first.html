@@ -1,15 +1,6 @@
-<!DOCTYPE html>
+{% extends "layout.html" %}
 
-<html lang="en">
-    <head>
-        <meta name="viewport" content="initial-scale=1, width=device-width">
-        <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet" type="text/css"/>
-        <title>hello</title>
-        <script src="https://kit.fontawesome.com/98c4cced12.js" crossorigin="anonymous"></script>
-    </head>
-    <body>
-        <header>
-            <img src="/static/logo.png" alt="Logo" class="logo" style="margin: 100px;">
+{% block body %}
             <div class = "first">
                     <form action="/new" method="post">
                             <div class="mb-3">
@@ -17,8 +8,8 @@
                                 <button class="btn btn-primary" type="submit">Seed your plant</button>
                             </div>
                     </form>
-                <img src="/static/empty_pot.jpg" alt="Logo">
+                <img src="/static/empty_pot.png" alt="Logo" >
             </div>
-            
-</html>
+{% endblock %}
+
             

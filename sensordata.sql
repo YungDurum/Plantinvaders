@@ -9,9 +9,10 @@ CREATE TABLE saturation_data (
     saturation DECIMAL(5,4) CHECK (saturation >= 0 AND saturation <= 1),
     FOREIGN KEY(id) REFERENCES plants(id)
 );
-CREATE TABLE phonenumbers (
+CREATE TABLE mailadresses (
+    id INTEGER PRIMARY KEY,   
     name TEXT NOT NULL,
-    phone TEXT NOT NULL
+    mail TEXT NOT NULL
 );
 
 

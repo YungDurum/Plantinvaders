@@ -1,39 +1,28 @@
-import os
-from moisturesensor_data import moisture, plants_required
-from flask import Flask, flash, jsonify, redirect, render_template, request, session
+from flask import Flask, flash, jsonify, redirect, render_template, request, session 
 from flask_session import Session
-from werkzeug.security import check_password_hash, generate_password_hash
-from cs50 import SQL
-import threading
-import time
+from flask_mail import Mail, Message 
+from helpers import moisture, plants_required, is_valid_email, email_alert, email_happy, mail_checker, update_db, app, mail, db , email_welcome
 import json
+import re
+import threading
 
-# Configure application
-app = Flask(__name__)
+# CONSTANTS
+app
+mail
+db
+NAME_PLANT = None
+WAIT = 600 # time between every database update and when is checked if an email needs to be send
 
-# Configure session to use filesystem (instead of signed cookies)
-app.config["SESSION_PERMANENT"] = False
-app.config["SESSION_TYPE"] = "filesystem"
-Session(app)
-
-# Configure CS50 Library to use SQLite database
-db = SQL("sqlite:///moisture.db")
-
-# Update database every five minutes 
-def update_db(wait):
-    while True:
-        value = moisture()
-        plant = db.execute("SELECT id FROM plants")[0]["id"]
-        db.execute("INSERT INTO saturation_data (id, saturation) VALUES (?,?)", plant , value)
-        time.sleep(wait)
-
-thread = threading.Thread(target=update_db, args=(600,))
-
-if db.execute("SELECT id FROM plants"):
+# if a plant has been declared.
+if len(db.execute("SELECT * from plants")):
+    NAME_PLANT = db.execute("SELECT * from plants")[0]['name'].upper()
+    thread = threading.Thread(target=update_db, args=(app, WAIT, NAME_PLANT,))
     thread.start()
 
-#create new datapoint every 5 minutes and thread this process
+# Initialize the app
+Session(app)
 
+# All the app routes
 @app.after_request
 def after_request(response):
     """Ensure responses aren't cached"""
@@ -42,22 +31,43 @@ def after_request(response):
     response.headers["Pragma"] = "no-cache"
     return response
 
+# Home screen
 @app.route("/")
 @plants_required
 def index():
+    # What emoji does the plant have
     value = moisture() * 100
-    value = "{:.2f}".format(value)
-    return render_template("index.html", plant_moist = value)
+    value_format = "{:.2f}".format(value)
+    if value < 20:
+        source = "static/verdrietig.png"
 
+    elif value < 30:
+        source= "static/boos.png"
+    
+    elif value < 50:
+        source = "static/verontwaardigd.png"
+
+    elif value < 80:
+        source = "static/blij.png"
+
+    elif value < 100:
+        source = "static/verliefd.png"
+
+    return render_template("index.html", plant_moist = value_format, picture = source, nameplant = NAME_PLANT )
+
+# First time usage
 @app.route("/new", methods=["GET", "POST"])
 def addplant():
     if request.method == "POST":
-        name = request.form.get("name")
-        db.execute("INSERT INTO plants (name) VALUES (?)",name)
+        global NAME_PLANT
+        NAME_PLANT = request.form.get("name")
+        db.execute("INSERT INTO plants (name) VALUES (?)", NAME_PLANT)
+        thread = threading.Thread(target=update_db, args=(app, WAIT, NAME_PLANT,))
         thread.start()
         return redirect("/")
     return "error"
 
+# The page with the stats
 @app.route("/stats")
 @plants_required
 def stats():
@@ -65,26 +75,57 @@ def stats():
     json_string = json.dumps(data)
     return render_template("graph.html", data=json_string)
 
+# The notifications page and page where you can add yourself too.
 @app.route("/notifications",  methods=["GET", "POST"])
 @plants_required
-def phonenumbers():
+def notify():
     if request.method == "GET":
-        phonenumbers = db.execute("SELECT * FROM phonenumbers")
-        for row in phonenumbers:
-            anonymous = 8 *"*" + "{phone}"
-            row["phone"]= anonymous.format(phone=row["phone"][-2:])
-        # phonenumber should be anonymous
-        if not phonenumbers:
+        notify_info = db.execute("SELECT * FROM mailadresses")
+        if not notify_info:
             return render_template("notifications.html")
-        return render_template("notifications.html", phone_data = phonenumbers)
+       
+        # mail should be anonymous
+        for row in notify_info:
+            row["mail"] = re.sub(r'.+(?=@.+?)', "xxxxx", row["mail"]) # stackoverflow @Briano
+            
+        return render_template("notifications.html", mail_data = notify_info)
 
-        
     if request.method == "POST":
-        phonenumber = request.form.get("phonenumber")
+        mail_user = request.form.get("Mail-adress")
         name = request.form.get("name")
-        db.execute("INSERT INTO phonenumbers (name, phone) VALUES (?,?)",name, phonenumber)
+
+        if not is_valid_email(mail_user):
+            flash('Mailaddress seems invalid!')
+            return redirect("/notifications")
+        
+        for row in db.execute("SELECT * FROM mailadresses"):
+            if row["mail"]==mail_user:
+                flash('Mailadress already in list')
+                return redirect("/notifications") 
+        
+
+        db.execute("INSERT INTO mailadresses (name, mail) VALUES (?,?)",name, mail_user)
+        email_welcome(recipient=[mail_user], name = name, plantname = NAME_PLANT)
         return redirect("/notifications")
 
+# Delete you from the list
+@app.route("/delete",  methods=["POST"])
+@plants_required
+def delete():
+    mail_id = request.form.get("delete")
+    db.execute("DELETE FROM mailadresses WHERE id = ?", mail_id)
+    return redirect("/notifications")
+
+# Info page
+@app.route("/info")
+def help():
+    return (render_template("info.html"))
+
+# Info page
+@app.route("/contactme")
+def contact():
+    return (render_template("contactme.html"))
+
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, use_reloader=False)
 

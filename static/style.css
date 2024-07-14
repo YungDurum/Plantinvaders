@@ -5,7 +5,8 @@ header {
 }
 
 .logo {
-  margin: 20px;
+  margin: 2vh;
+  margin-top: 60px;
   display:inline-block;
   height:50px;
   width: auto;
@@ -14,24 +15,24 @@ header {
 }
 
 body {
-  max-width: 900px;
+  max-width: 1300px;
   margin: auto;
-  background-color: #489EFA;
+  background-color: #515eead8;
 }
 
 nav {
   display:inline-flex;
   justify-content:flex-start;
-  margin: 40px;
+  margin-top: 40px;
   align-items:center;
   font-family: 'Press Start 2P';
   font-size: 1rem;
   line-height: 2;
-  background-color: #489EFA;
   text-transform: uppercase;
 }
 .first{
   display: flex;
+  margin-top: -15vh;
   flex-direction: column;
   gap: 10px;
   justify-content: center;
@@ -40,18 +41,18 @@ nav {
 }
 
 .first img {
-  height: 100px;
+  height: 400px;
   width: auto;
   object-fit: contain;
 }
 
 /* Here is the  nav bar */
 nav a {
-  text-decoration: none;
   color: #fff090;
 }
 
 li {
+  list-style-type: none;
   color: #ffffff;
 }
 
@@ -67,19 +68,22 @@ li {
 
 .arrow:hover {
   cursor: pointer;
-  background-color: rgba(0,0,0,0.2);
+  background-color: rgba(0, 0, 0, 0.168);
+  color: #ffffffc3;
 }
 
 .arrow:hover i { 
   display: block;
   position: absolute;
   top: 0.50em; 
-  left: -6em;
+  left: -3em;
+  color:#ffffff
 }
 
+/* Leavy plant :) */
 .value {
   display: flex;
-  margin-top: -30vh;
+  margin-top: -25vh;
   justify-content: center;
   align-items: center;
   flex-direction: column;
@@ -115,20 +119,92 @@ li {
 /* notifications */
 .new_notifier{
   display: flex;
-  align-items: center;
+  width: 600px;
+  height: auto;
+  color: #ffffff;
   justify-content: center;
-  margin: 10px;
+  align-items: flex-start;
+  margin: auto;
+  margin-top: -20vh;
+  flex-direction: column;
+  gap: 25px;
+  /* border: solid 3px rgb(0, 0, 0); */
+}
+
+.subtext{
+  margin-top: -10px;
 }
 
 .table{
-  display: flex;
-  align-items: center;
+  width: 100%;
+}
+
+.table td{
+  vertical-align: middle;
+}
+
+.table .column1{
+  width: 10%;
+}
+
+.table .column2{
+  width: 30%;
+}
+
+.table .column3{
+  width: 40%;
+}
+
+.table .column4{
+  width: 20%;
+}
+
+
+.mb-3 {
+  display:flex;
+  align-items: last baseline;
+  margin-top: -20px;
   justify-content: center;
-  margin: 10px;
+  gap: 20px;
+}
+
+/* info */
+.helpbox{
+  display: flex;
+  width: 600px;
+  height: auto;
+  color: #ffffff;
+  justify-content: center;
+  align-items: center;
+  margin: auto;
+  margin-top: -20vh;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.info_header{
+  align-self: flex-start;
+  font-family: 'Press Start 2P';
+  font-size: 1.5rem;
+
 }
 
 /* graph */
 .graph{
   background-color: #ffffff;
+}
 
+.chartcard{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chartBox {
+  width: 600px;
+  /* margin-top: -25vh; */
+  padding: 20px;
+  border-radius: 20px;
+  /* border: solid 3px rgb(0, 0, 0); */
+  background: white;
 }

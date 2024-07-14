@@ -1,26 +1,60 @@
 {% extends "layout.html" %}
 {% block body %}
-<div class="graph">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js" integrity="sha512-ZwR1/gSZM3ai6vCdI+LVF1zSq/5HznD3ZSTk7kajkaj4D292NLuduDCO1c/NT8Id+jE58KYLKT7hXnbtryGmMg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hammer-time/1.1.0/hammer-time.min.js" integrity="sha512-JPF1dnYKN1+CUlc7z2zNkIhlLxaE//Urdc4+Yfi3y6XMfs7JOakBKSCn9Z3Uxzk7CtgP6rkNHZ2UP79TctMBQQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-zoom/2.0.1/chartjs-plugin-zoom.min.js" integrity="sha512-wUYbRPLV5zs6IqvWd88HIqZU/b8TBx+I8LEioQ/UC0t5EMCLApqhIAnUg7EsAzdbhhdgW07TqYDdH3QEXRcPOQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>  
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+
+<div class  = "helpbox">
+  <h3 class = "info_header">Stats</h3>
+  <div class= "chartBox">
     <canvas id="myChart"></canvas>
+    <!-- <button name="day" onclick="changedata(array_day)">Day</button>
+    <button name="week">Week</button>
+    <button name="month">Month</button>
+    <button name="all">all</button> -->
   </div>
-  
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  
+</div>
   <script>
     const ctx = document.getElementById('myChart');
-    const data1 = JSON.parse({{ data | tojson | safe }})
+    const data1 = JSON.parse({{ data | tojson | safe }});
     console.log(typeof(data1))
     const labels = data1.map(item => item.Timestamp);
     const moisture = data1.map(item => item.saturation);
     
     // data block
+    // from channel chartjs on youtube
     const data = {
       labels: labels,
       datasets: [{
-        label: 'Percentage',
+        label: 'Moisture percentage',
         data: moisture,
         borderWidth: 1,
-        pointRadius: 0
+        fill: true,
+        pointRadius: 0,
+        backgroundColor: (context) => {
+          const bgColor = [
+            'rgb(54, 222, 141,1)',
+            'rgba(255, 260, 86, 0.8)',
+            'rgba(255, 26, 104, 0.8)'
+          ];
+
+        if (!context.chart.chartArea) {
+          return;
+        }
+
+        const { ctx, chartArea: { top, bottom, height}, scales: {y} } = context.chart;
+        const gradientBg = ctx.createLinearGradient(0, top, 0, bottom);
+        const range = [0.2, 0.8, 1.0];
+        const rangeReverse = range.reverse()
+
+        gradientBg.addColorStop(0, bgColor[0]);
+        gradientBg.addColorStop(0.5, bgColor[1]);
+        gradientBg.addColorStop(1, bgColor[2]);
+
+        return gradientBg
+        },
+        borderColor: '#ffffff',
       }]
     }
     
@@ -31,14 +65,114 @@
       options: {
         scales: {
           y: {
-            beginAtZero: true
+            ticks: {
+                min: 0,
+                max: 100,// Your absolute max value
+                callback: function (value) {
+                    return (value * 100).toFixed(0) + '%'; // Convert it to percentage
+                },
+            },
+            scaleLabel: {
+                display: true,
+                color: "#ffffff",
+                labelString: 'Percentage',
+            },
+          },
+          x: {
+                type: 'time',
+                time: {
+                    unit: 'day',
+                },    
+                ticks: {
+                  source: 'auto',
+                  maxRotation: 0,
+                  major: {
+                    enabled: true
+                  },
+                },
+          },
+        },
+        plugins: {
+          zoom: {
+            zoom: {
+              wheel: {
+                enabled: true,
+              },
+              pinch: {
+                enabled: true,
+              },
+              mode: 'xy'
+            },
+            limits:{
+               y: {min: 0, max: 1},
+            }
           }
         }
       }
-    };
-    
+    };    
     // render block
     new Chart(ctx, config);
+
+    // const name = document.querySelector(".name");
+    // const btn = document.querySelector("button");
+
+
+// function minimum_date(start) {
+//   var today = new Date(); // today!
+//   var x = start; // go back "start" days!
+//   var y = new Date(today.setDate(today.getDate() - x)).toISOString().split('T')[0];
+//   return y
+// }
+
+// function findindex(word) {
+//   for (var i = 0; i < labels.length; i++){
+//     if (labels[i].includes(word)){
+//       return i
+//     }
+//   }
+// }
+
+// var index_day = findindex(minimum_date(1))
+// var index_week = findindex(minimum_date(7))
+// var index_month = findindex(minimum_date(31))
+
+// array_day = labels.slice(index_day,-1)
+// array_week = labels.slice(index_week, -1)
+// array_month = labels.slice(index_month, -1)
+
+// function changedata(newdata){
+//   const chart = document.getElementById("myChart");
+//   chart.data = newdata
+//   chart.update();
+// }
+
+const ctx1 = document.getElementById('myPieChart').getContext('2d');
+
+const data2 = {
+  datasets: [{
+    data: moisture,
+    backgroundColor: ['#D60000', '#F46300', '#0358B6', '#44DE28'], // Customize colors
+  }],
+};
+
+const config1 = {
+  type: 'pie',
+  data: data2,
+  options: {
+    responsive: true,
+    plugins: {
+      legend: false, // Hide legend
+      tooltip: false, // Disable tooltips
+    },
+  },
+};
+
+new Chart(ctx1, config1);
+
+
+
+
+
   </script>
     {% endblock %}
             
