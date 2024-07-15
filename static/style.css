@@ -121,7 +121,7 @@ li {
   display: flex;
   width: 600px;
   height: auto;
-  color: #ffffff;
+  color: #000000ab;
   justify-content: center;
   align-items: flex-start;
   margin: auto;
@@ -190,10 +190,6 @@ li {
 }
 
 /* graph */
-.graph{
-  background-color: #ffffff;
-}
-
 .chartcard{
   display: flex;
   align-items: center;
@@ -207,4 +203,13 @@ li {
   border-radius: 20px;
   /* border: solid 3px rgb(0, 0, 0); */
   background: white;
+}
+
+.tableBox {
+  width: 500px;
+  /* margin-top: -25vh; */
+  padding: 20px;
+  border-radius: 20px;
+  /* border: solid 3px rgb(0, 0, 0); */
+  background: white
 }
