@@ -33,9 +33,9 @@ mcp = MCP.MCP3008(spi, cs)
 chan = AnalogIn(mcp, MCP.P0)
 
 # Sensor readings wet soil
-MIN_VALUE = 56060
+MIN_VALUE = 56700
 # Sensor readings dry soil
-MAX_VALUE = 29532
+MAX_VALUE = 29000
 
 def moisture():
     # Go from current value to moisture percentage
