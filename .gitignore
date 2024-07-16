@@ -14,4 +14,4 @@ adafruit_mcp3xxx/
 helper_new.py
 /moisture.db
 templates/Final-project.code-workspace
-/,env
+/.env
