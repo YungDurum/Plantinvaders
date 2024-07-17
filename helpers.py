@@ -125,4 +125,4 @@ def update_db(app, wait, name):
         time.sleep(wait)
     
 if __name__ == "__main__":
-    moisture()
+   # Enter function to test

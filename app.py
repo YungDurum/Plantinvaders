@@ -26,7 +26,7 @@ def after_request(response):
     response.headers["Pragma"] = "no-cache"
     return response
 
-# Home screen
+# Home screen (decorator renders other page when no plant is registered)
 @app.route("/")
 @plants_required
 def index():
