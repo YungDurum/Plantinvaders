@@ -121,7 +121,7 @@ li {
   display: flex;
   width: 600px;
   height: auto;
-  color: #000000ab;
+  color: #ffffff;
   justify-content: center;
   align-items: flex-start;
   margin: auto;
@@ -159,6 +159,15 @@ li {
   width: 20%;
 }
 
+.tableBox {
+  width: 500px;
+  /* margin-top: -25vh; */
+  padding: 20px;
+  border-radius: 20px;
+  /* border: solid 3px rgb(0, 0, 0); */
+  color: #000000c6;
+  background: white;
+}
 
 .mb-3 {
   display:flex;
@@ -205,11 +214,3 @@ li {
   background: white;
 }
 
-.tableBox {
-  width: 500px;
-  /* margin-top: -25vh; */
-  padding: 20px;
-  border-radius: 20px;
-  /* border: solid 3px rgb(0, 0, 0); */
-  background: white
-}

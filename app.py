@@ -1,16 +1,14 @@
-from flask import Flask, flash, jsonify, redirect, render_template, request, session 
-from flask_session import Session
-from flask_mail import Mail, Message 
-from helpers import moisture, plants_required, is_valid_email, email_alert, email_happy, mail_checker, update_db, app, mail, db , email_welcome
+from flask import flash, redirect, render_template, request
+from helpers import  app, mail, db, moisture, plants_required, is_valid_email, update_db, email_welcome
 import json
 import re
 import threading
 
-# CONSTANTS
+# CONSTANTS (many assigned in helper file)
 app
 mail
 db
-NAME_PLANT = None
+NAME_PLANT = None # Gets assigned later when plant is named or already named
 WAIT = 600 # time between every database update and when is checked if an email needs to be send
 
 # if a plant has been declared.
@@ -18,9 +16,6 @@ if len(db.execute("SELECT * from plants")):
     NAME_PLANT = db.execute("SELECT * from plants")[0]['name'].upper()
     thread = threading.Thread(target=update_db, args=(app, WAIT, NAME_PLANT,))
     thread.start()
-
-# Initialize the app
-Session(app)
 
 # All the app routes
 @app.after_request
@@ -36,7 +31,7 @@ def after_request(response):
 @plants_required
 def index():
     # What emoji does the plant have
-    value = moisture() * 100
+    value = moisture() * 100 #to get percentage
     value_format = "{:.2f}".format(value)
     if value < 20:
         source = "static/verdrietig.png"

@@ -5,8 +5,7 @@ import board
 import busio
 import digitalio
 from flask_mail import Mail, Message 
-from flask import Flask, flash, jsonify, redirect, render_template, request, session # type: ignore
-from flask_session import Session
+from flask import Flask, render_template
 from functools import wraps
 import re
 from statistics import mean
@@ -14,47 +13,21 @@ import time
 
 # Configure application
 # Initialize the app
-app = Flask(__name__)
-app.config.from_object('config.Config')
-mail = Mail(app)
-db = SQL(app.config['DATABASE'])
-Session(app)
+app = Flask(__name__) # Initialize app
+app.config.from_object('config.Config') # configure app
+mail = Mail(app) # Initialize mail
+db = SQL(app.config['DATABASE']) # Initialize database
 
-# Create the SPI bus
-spi = busio.SPI(clock=board.SCK, MISO=board.MISO, MOSI=board.MOSI)
+#CONSTANTS
+# These values determine when an email gets send. Waterlevel > 80% and lower than 20%
+VALUE_HIGH = 0.8
+VALUE_LOW = 0.2
+# Calibration sensor
+MIN_VALUE = 56700 # sensory reading maximum wetnesss with extra marge
+MAX_VALUE = 29000 # sensor readings dry soil with extra marge
 
-# Create the cs (chip select)
-cs = digitalio.DigitalInOut(board.D8)
-
-# Create the MCP3008 object
-mcp = MCP.MCP3008(spi, cs)
-
-# Create an analog input channel on Pin 0
-chan = AnalogIn(mcp, MCP.P0)
-
-# Sensor readings wet soil
-MIN_VALUE = 56700
-# Sensor readings dry soil
-MAX_VALUE = 29000
-
-def moisture():
-    # Go from current value to moisture percentage
-    def percentage(value_now):
-         moist = (value_now - MIN_VALUE)/(MAX_VALUE - MIN_VALUE)
-         return moist
-
-    rollingmean=[]
-
-    for x in range(5):
-        rollingmean.append(chan.value)
-        time.sleep(0.5)
-             
-    average_value = mean(rollingmean)     
-    return (percentage(average_value))
-        #
-        # #make an update for the next database update
-        ##in case nothing is being updated create an update with value None
     
+# Decorator that wraps the app.route functions to check if there is already a plant (name) in the db. Otherwise first name a plant.    
 def plants_required(f):
     @wraps(f)
     def decoratedfunction(*args, **kwargs):
@@ -63,11 +36,49 @@ def plants_required(f):
             return f(*args, **kwargs)
     return decoratedfunction
 
-# attribution cs50 duck
+# To check if email address is legit
 def is_valid_email(email):
     pattern = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
     return re.match(pattern, email) is not None
 
+
+# Send welcome email when new email get add to list
+def email_welcome(recipient = ["None"], name = "Jeroen", plantname = None):
+        msg = Message(subject = f'Welcome {name}', sender ='plantje.dorstig@gmail.com', recipients = recipient)
+        msg.body = f'Hi {name}! \n\nFrom now on you are part of my friends, and I will try to reach you when I am thirsty. \nWish you a happy and hydrated day! \n\nYour favourite plant, \n{plantname}'
+        mail.send(msg) 
+
+# THE FUNCTIONS THAT FOLLOW ARE ONLY BEING USED INSIDE THE updat_db function. THIS AND moisture() ARE THE ONLY FUNCTIONS BEING CALLED BY MAIN.PY
+# Checks if the email is valid. Created by cs50 duck
+
+# Get the moisture level value.
+def moisture():
+    # Making the raspberry pi connect to the readings of the sensor.
+    # Create the SPI bus code from the website if instructables. See read.me
+    spi = busio.SPI(clock=board.SCK, MISO=board.MISO, MOSI=board.MOSI)
+    # Create the cs (chip select)
+    cs = digitalio.DigitalInOut(board.D8)
+    # Create the MCP3008 object
+    mcp = MCP.MCP3008(spi, cs)
+    # Create an analog input channel on Pin 0
+    chan = AnalogIn(mcp, MCP.P0)
+
+    # Go from current value to moisture percentage
+    def percentage(value_now):
+         moist = (value_now - MIN_VALUE)/(MAX_VALUE - MIN_VALUE)
+         return moist
+
+    rollingmean=[]
+
+    # Create mean value of five readings.
+    for x in range(5):
+        rollingmean.append(chan.value)
+        time.sleep(0.5)
+             
+    average_value = mean(rollingmean)     
+    return (percentage(average_value))
+
+# Send alert email when waterlevel is low
 def email_alert(plantname):
     users = db.execute("SELECT name, mail from mailadresses")
 
@@ -76,7 +87,8 @@ def email_alert(plantname):
         msg.body = f"Could you please bring me some water. I am feeling like Spongebob in Sandy's house \n Yours Sincerely, \nYour favourite plant, \n{plantname}"
         mail.send(msg) 
 
-def email_happy(recipient = ["jeroen.vanasten@icloud.com"], name = "Jeroen", plantname = None):
+# Send  happy email after the plant is watered
+def email_happy(plantname = None):
     users = db.execute("SELECT name, mail from mailadresses")
     name_plant = db.execute("SELECT name from plants")[0]['name']
 
@@ -85,21 +97,16 @@ def email_happy(recipient = ["jeroen.vanasten@icloud.com"], name = "Jeroen", pla
         msg.body = f'Thanks guys, I am fine now! \n Yours Sincerely, \nYour favourite plant, \n{plantname}'
         mail.send(msg) 
 
-def email_welcome(recipient = ["jeroen.vanasten@icloud.com"], name = "Jeroen", plantname = None):
-        msg = Message(subject = f'Welcome {name}', sender ='plantje.dorstig@gmail.com', recipients = recipient)
-        name_plant = db.execute("SELECT name from plants")[0]['name']
-        msg.body = f'Hi {name}! \n\nFrom now on you are part of my friends, and I will try to reach you when I am thirsty. \nWish you a happy and hydrated day! \n\nYour favourite plant, \n{plantname}'
-        mail.send(msg) 
-
+# Check if and what email needs to get send
 def mail_checker(app, value, confirmation, name):
     #checks if email has been sent of not in case both are true an email will be sent
-    if value > 0.8 and confirmation != False:
+    if value > VALUE_HIGH and confirmation != False:
        with app.app_context():
             email_happy(name)
             return False
 
     #checks if email has been sent of not in case both are true an email alert will be sent
-    elif value < 0.2 and confirmation != True:
+    elif value < VALUE_LOW and confirmation != True:
         with app.app_context():
             email_alert(name)
             return True
@@ -107,8 +114,7 @@ def mail_checker(app, value, confirmation, name):
     else:
         return confirmation
      
-
-# Update database every five minutes and check if mail needs to be sent
+# Update database every 15 minutes and check if mail needs to be sent, it uses all the function assigned above.
 def update_db(app, wait, name):
     confirmation = None
     while True:
@@ -117,7 +123,6 @@ def update_db(app, wait, name):
         plant = db.execute("SELECT id FROM plants")[0]["id"]
         db.execute("INSERT INTO saturation_data (id, saturation) VALUES (?,?)", plant , value)
         time.sleep(wait)
-# threat the checker
     
 if __name__ == "__main__":
     moisture()
