@@ -14,9 +14,10 @@ Plantinvaders is a flask application that represents virtually your household pl
 
 ##### For this app to work you need the following: #####
 
-- A RaspberryPi 3b
+- A RaspberryPi 3B
 - Capacitive Moisture sensor V1.2
 - MCP3008
+- Breadboard and wires
 
 This page shows the circuit connection and the calibration.
 https://www.instructables.com/Measuring-Soil-Moisture-Using-Raspberry-Pi/
