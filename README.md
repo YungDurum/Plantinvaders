@@ -53,7 +53,7 @@ After initializing the app and having created a name for a plant the function (f
 
 
 #### Helper.py ####
-The helpers file setsup the app and configures the app.
+The helpers file set-up the app and configures the app.
 
 *moisture():*  
 This function is responsible for checking the current waterlevel. By making use of the sensorreading of the capacitive moisture sensor. For the circuit connection, accessing the GPIO pins and the usage of the library I would like to refer to the instructables page mentioned above. The two calibration points being used are the sensor's readings when dry and drained with water. The relationship between the waterlevel and sensor reading value is linear. 
