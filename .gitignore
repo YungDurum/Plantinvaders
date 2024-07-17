@@ -15,3 +15,4 @@ helper_new.py
 /moisture.db
 templates/Final-project.code-workspace
 /.env
+/.DS_Store   
