@@ -22,9 +22,9 @@ Plantinvaders is a flask application that represents virtually your household pl
 This page shows the circuit connection, the calibration and code being used to access the sensor readings.
 https://www.instructables.com/Measuring-Soil-Moisture-Using-Raspberry-Pi/
 
-#### Interface ####
+#### Application set-up ####
 
-After installing the app you have to set-up an email credentials. For this to work you have to create a .env file with the following key value pairs
+After installing the app you have to set-up your email credentials. For this to work you have to create a file named .env on the route level of the application with the following key-value pairs.
 - EMAIL_USER = ["YOUR EMAIL"] *only works with a gmail account, if else is wished change the mailserver being found in Config.py file*
 - EMAIL_PASS = ["YOUR PASSWORD"]
 
@@ -42,12 +42,13 @@ The main code for the app is inside the app.py. The supporting file, the helpers
 The design choice for separating the code in this matter is to create code that is more readable, and the database saves the most essential data for when something goes wrong and the app needs to restart.
 
 #### app.py ####
-Here it is determined to not cache data on the clientside. This is done because some information changes realtime and its is not favoured the conflicts with the data on the clientside.
+Here it is determined to not cache data on the clientside. This is done because some information changes realtime and its is not favoured to have conflicts with the data on the clientside.
 
-The app routes are for all the pages. There is also a decorator called @plants_required some functions and therefor pages are not accesible if there is no plant registered.
+There is also a decorator called @plants_required some functions and therefor pages are not accesible if there is no plant registered.
 
 ##### Multithreading #####
 After initializing the app and having created a name for a plant the function (from helpers.py, update_db) is being activated. Causing the moisture.db database being updated every 10 minutes with the current waterlevel. This function also checks if the waterlevel has crossed a threshold or not, if true this activates the mailing list. Sending people on the list an email suggesting if plant needs te be watered or not. Since this function is running all the time on the background and to prevent the application from stopping, a multithread function is being used.
+
 
 #### Helper.py ####
 The helpers file setsup the app and configures the app.
@@ -73,4 +74,12 @@ The moisture.db file consists of the following tables: plants, saturation_data a
 - plants table conceals the name of the plant and id.
 - saturation_data table is the file being updated every 10 minutes and holds a *timestamp* with the datetime, the saturation level, and plant id.
 - mailaddreses table hold the name and mailadresses of the people to be notified.
+
+### HTML AND CHART JS ###
+The pages are created by HTML/CSS and jinja. Most are design choices so I will not go into to much detail. One of the libraries I have used is ChartJS and with the help of the CHART JS youtube channel, I figured my way through the library. The graph that is designed can be zoomed in and out. In the end I was not really satisfied with the result. I hope to improve this in the future, and I hope to make this more user-friendly and easier to use for research purposes.
+
+### Front-end design choices ###
+For the design I wished to create a friendly, retro looking application thats easy to use.
+
+THANKS CS50 for the opportunity to learn more about computerscience and programming. It is a rabbithole but fun :).
 
