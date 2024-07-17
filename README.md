@@ -22,6 +22,8 @@ Plantinvaders is a flask application that represents virtually your household pl
 This page shows the circuit connection, the calibration and code being used to access the sensor readings.
 https://www.instructables.com/Measuring-Soil-Moisture-Using-Raspberry-Pi/
 
+If you wish to use this application for testing purposes and do not have the necessary libraries, you can create mock libraries. For guidance on creating these, please feel free to contact me. I also have some dummy libraries available for use.
+
 #### Application set-up ####
 
 After installing the app you have to set-up your email credentials. For this to work you have to create a file named .env on the route level of the application with the following key-value pairs.
